@@ -1,0 +1,17 @@
+---
+import ExperienceList from '../components/ExperienceList.astro';
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+	title="Experience"
+	description="Yurii Khariton's work history, from WPF charts to on-device LLMs: Puma Technologies, Unstoppable Domains and SciChart."
+>
+	<section aria-labelledby="page-title">
+		<h1 id="page-title" class="text-[2rem] leading-tight font-light tracking-tight text-heading">
+			The road so far
+		</h1>
+		<p class="mt-1 mb-8 text-lg text-muted">From WPF to on-device LLMs... and beyond</p>
+		<ExperienceList />
+	</section>
+</Base>

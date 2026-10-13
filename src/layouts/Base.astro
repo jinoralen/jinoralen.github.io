@@ -1,0 +1,101 @@
+---
+import { ThemeScript } from 'astro-theme-toggle/components';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { Icon } from 'astro-icon/components';
+import { menuLinks, site } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const pageTitle = title ? `${title} · ${site.author}` : `${site.author} · ${site.tagline}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+const year = new Date().getFullYear();
+const contacts = [
+	{ label: 'GitHub', href: `https://github.com/${site.github}`, icon: 'fa7-brands:github' },
+	{ label: 'LinkedIn', href: `https://www.linkedin.com/in/${site.linkedin}/`, icon: 'fa7-brands:linkedin' },
+];
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<meta name="author" content={site.author} />
+		<link rel="canonical" href={canonicalURL} />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:site_name" content={site.author} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={`${site.author}, ${site.tagline}`} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<ThemeScript />
+	</head>
+	<body class="mx-auto flex min-h-screen max-w-[52rem] flex-col bg-bg px-4 pt-6 font-sans text-base leading-relaxed text-fg antialiased sm:px-8 sm:pt-8">
+		<a
+			class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-bg focus:px-3 focus:py-2"
+			href="#main"
+		>
+			Skip to content
+		</a>
+		<header class="mb-10 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:mb-14">
+			<a href="/" class="text-lg text-heading">
+				{site.firstName} <strong class="[font-variant:small-caps]">{site.lastName}</strong>
+			</a>
+			<div class="flex items-center gap-4">
+				<nav aria-label="Main" class="flex gap-4">
+					{menuLinks.map((l) => (
+						<a
+							class="text-muted underline-offset-4 hover:text-fg hover:underline aria-[current=page]:text-fg aria-[current=page]:underline"
+							href={l.path}
+							aria-current={Astro.url.pathname === l.path ? 'page' : undefined}
+						>
+							{l.title}
+						</a>
+					))}
+				</nav>
+				<ul class="flex items-center gap-1 text-muted">
+					{contacts.map((c) => (
+						<li class="flex">
+							{/* Same 36px box as the theme toggle, so all header icons share one centre line. */}
+							<a
+								class="flex h-9 w-8 items-center justify-center hover:text-fg"
+								href={c.href}
+								aria-label={c.label}
+								title={c.label}
+							>
+								<Icon name={c.icon} class="text-lg" />
+							</a>
+						</li>
+					))}
+				</ul>
+				<ThemeToggle />
+			</div>
+		</header>
+		<main id="main">
+			<slot />
+		</main>
+		<footer class="mt-auto flex flex-col items-center gap-2 pt-16 pb-6 text-sm text-muted sm:flex-row sm:justify-between">
+			<p>
+				&copy; {year} {site.author}
+			</p>
+		</footer>
+		<script is:inline type="speculationrules">
+			{ "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "immediate" }] }
+		</script>
+	</body>
+</html>

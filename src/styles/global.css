@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter/opsz.css';
+
+/* Dark mode follows the data-theme attribute set by astro-theme-toggle (ThemeScript in Base.astro). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Colours: dark is Evergarden fall (https://evergarden.moe, MIT). Light is derived from it:
+   fall's base as text on a faintly green white, a darker fall blue, and a hand-picked
+   cooler green (#4d7a45) rather than a darker fall green (#577f2f, more olive).
+   Registered with @property so theme switches can transition. */
+@property --color-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #fafbf7;
+}
+@property --color-fg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #232a2e;
+}
+@property --color-heading {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #171c1f;
+}
+@property --color-muted {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #55665f;
+}
+@property --color-accent {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #4d7a45;
+}
+@property --color-link {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #3b5f8f;
+}
+@property --color-link-line {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a9bbd6;
+}
+@property --color-rule {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #9aa8a0;
+}
+@property --color-tag {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #d3dbd4;
+}
+@property --color-selection {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e1ebd6;
+}
+
+@theme {
+	--font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+
+	/* light: fall turned inside out (fall base as text on a faintly green white) */
+	--color-bg: #fafbf7;
+	--color-fg: #232a2e;
+	--color-heading: #171c1f;
+	--color-muted: #55665f;
+	--color-accent: #4d7a45;
+	--color-link: #3b5f8f;
+	--color-link-line: #a9bbd6;
+	--color-rule: #9aa8a0;
+	--color-tag: #d3dbd4;
+	--color-selection: #e1ebd6;
+}
+
+@layer base {
+	html {
+		color-scheme: light;
+		scrollbar-gutter: stable;
+		transition:
+			--color-bg 300ms ease-in-out,
+			--color-fg 300ms ease-in-out,
+			--color-heading 300ms ease-in-out,
+			--color-muted 300ms ease-in-out,
+			--color-accent 300ms ease-in-out,
+			--color-link 300ms ease-in-out,
+			--color-link-line 300ms ease-in-out,
+			--color-rule 300ms ease-in-out,
+			--color-tag 300ms ease-in-out,
+			--color-selection 300ms ease-in-out;
+
+		/* fall */
+		&[data-theme='dark'] {
+			color-scheme: dark;
+			--color-bg: #232a2e;
+			--color-fg: #f8f9e8;
+			--color-heading: #f8f9e8;
+			--color-muted: #96b4aa;
+			--color-accent: #cbe3b3;
+			--color-link: #b2caed;
+			--color-link-line: #58686d;
+			--color-rule: #58686d;
+			--color-tag: #4a585c;
+			--color-selection: #374145;
+		}
+	}
+
+	::selection {
+		background-color: var(--color-selection);
+	}
+
+	b,
+	strong {
+		font-weight: 600;
+	}
+
+	/* astro-icon SVGs: sit on the text baseline. */
+	svg[data-icon] {
+		display: inline-block;
+		vertical-align: -0.125em;
+	}
+
+	:target {
+		scroll-margin-block: 5ex;
+	}
+
+	a:focus-visible {
+		outline: 2px solid var(--color-link);
+		outline-offset: 3px;
+	}
+}
+
+@layer components {
+	/* Link inside text: coloured, medium weight, thin light underline. */
+	.link {
+		@apply font-medium text-link underline decoration-link-line decoration-1 underline-offset-4 hover:decoration-link;
+	}
+
+	/* Quiet link: text colour, semibold, thin underline; takes the link colour on hover. */
+	.link-quiet {
+		@apply font-semibold underline decoration-rule decoration-1 underline-offset-4 hover:text-link hover:decoration-link;
+	}
+
+	/* Lists with angle-right markers. */
+	.chevron-list {
+		@apply space-y-1;
+
+		& > li {
+			position: relative;
+			padding-left: 1.5em;
+		}
+
+		& > li::before {
+			content: '';
+			position: absolute;
+			left: 0.85em;
+			top: 0.5em;
+			width: 0.35em;
+			height: 0.7em;
+			background-color: var(--color-accent);
+			mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 512'%3E%3Cpath d='M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z'/%3E%3C/svg%3E")
+				no-repeat center / contain;
+		}
+	}
+
+	.tag {
+		@apply inline-block rounded border border-tag px-1.5 text-[0.8rem] leading-normal;
+	}
+}

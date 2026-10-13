@@ -1,0 +1,26 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+{/* flex, not the default inline: an inline wrapper puts the button on the text baseline and lifts it. */}
+<div class="flex">
+	<button class="relative h-9 w-9 cursor-pointer text-muted hover:text-fg" type="button" data-theme-toggle>
+		<span class="sr-only">Toggle colour theme</span>
+		<Icon
+			name="fa7-solid:moon"
+			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg transition-all dark:scale-0 dark:opacity-0"
+		/>
+		<Icon
+			name="fa7-solid:sun"
+			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 text-lg opacity-0 transition-all dark:scale-100 dark:opacity-100"
+		/>
+	</button>
+</div>
+
+<script>
+	import { getTheme, setTheme } from 'astro-theme-toggle/client';
+
+	document
+		.querySelector<HTMLButtonElement>('[data-theme-toggle]')
+		?.addEventListener('click', () => setTheme(getTheme() === 'dark' ? 'light' : 'dark'));
+</script>
