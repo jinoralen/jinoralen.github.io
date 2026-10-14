@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+	<!-- "YK" monogram in the site's dark theme colours (Evergarden fall). Drawn with strokes, not text, so it needs no font. -->
+	<rect width="32" height="32" rx="7" fill="#232a2e" />
+	<g fill="none" stroke="#cbe3b3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M6.5 9 L10.5 15.5 L14.5 9 M10.5 15.5 V23" />
+		<path d="M18.5 9 V23 M25.5 9 L18.8 16.2 M21 14 L25.8 23" />
+	</g>
+</svg>

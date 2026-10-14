@@ -1,0 +1,37 @@
+---
+// Section title: icon, small caps, rule underneath.
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	/** Iconify name, e.g. "fa7-solid:suitcase". */
+	icon: string;
+	id?: string;
+	/** Heading level; h1 when the title heads its own page. */
+	as?: 'h1' | 'h2';
+	/** Makes the whole title a link, marked with a chevron. */
+	href?: string;
+}
+
+const { icon, id, as: Tag = 'h2', href } = Astro.props;
+---
+
+<Tag
+	id={id}
+	class="mb-4 border-b border-rule pb-1 text-[1.45rem] leading-tight font-normal text-heading [font-variant:small-caps]"
+>
+	{href ? (
+		<a href={href} class="group flex items-baseline hover:text-link">
+			<Icon name={icon} class="me-2 text-[0.9em] text-accent" />
+			<slot />
+			<Icon
+				name="fa7-solid:angle-right"
+				class="ms-2 text-[0.7em] text-muted transition-transform group-hover:translate-x-1 group-hover:text-link"
+			/>
+		</a>
+	) : (
+		<>
+			<Icon name={icon} class="me-2 text-[0.9em] text-accent" />
+			<slot />
+		</>
+	)}
+</Tag>

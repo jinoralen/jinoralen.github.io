@@ -1,0 +1,58 @@
+---
+import SectionTitle from '../components/SectionTitle.astro';
+import Base from '../layouts/Base.astro';
+import { interests, now, pastWork, site, summary } from '../data/site';
+---
+
+<Base>
+	<section aria-labelledby="intro-title" class="mb-10">
+		<h1 id="intro-title" class="text-[2rem] leading-tight font-light tracking-tight text-heading">
+			{site.firstName} <strong class="[font-variant:small-caps]">{site.lastName}</strong>
+		</h1>
+		<p class="mt-1 text-lg text-muted">
+			{site.tagline} in {site.location}, working remotely.
+		</p>
+		<div class="mt-6 space-y-3">
+			{summary.map((p) => (
+				<p set:html={p} />
+			))}
+		</div>
+	</section>
+
+	<section aria-labelledby="now-title" class="mb-10">
+		<SectionTitle icon="fa7-solid:seedling" id="now-title">
+			Now
+		</SectionTitle>
+		<ul class="chevron-list">
+			{now.map((n) => (
+				<li>
+					<strong>{n.title}</strong>: <Fragment set:html={n.text} />
+				</li>
+			))}
+		</ul>
+	</section>
+
+	<section aria-labelledby="past-title" class="mb-10">
+		<SectionTitle icon="fa7-solid:suitcase" id="past-title">
+			Before
+		</SectionTitle>
+		<ul class="chevron-list">
+			{pastWork.map((w) => (
+				<li set:html={w} />
+			))}
+		</ul>
+	</section>
+
+	<section aria-labelledby="interests-title">
+		<SectionTitle icon="fa7-solid:keyboard" id="interests-title">
+			Interests
+		</SectionTitle>
+		<ul class="chevron-list">
+			{interests.map((i) => (
+				<li>
+					<strong>{i.title}</strong>: <Fragment set:html={i.text} />
+				</li>
+			))}
+		</ul>
+	</section>
+</Base>
