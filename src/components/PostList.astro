@@ -1,0 +1,42 @@
+---
+import { Icon } from 'astro-icon/components';
+import { formatDate, readingMinutes, type Post } from '../data/posts';
+
+interface Props {
+	posts: Post[];
+}
+const { posts } = Astro.props;
+---
+
+<ul class="space-y-10">
+	{posts.map((post) => (
+		<li>
+			<h2 class="relative text-xl leading-snug">
+				<Icon
+					name="fa7-solid:chevron-right"
+					class="absolute end-full top-[0.3em] me-1 text-[0.85em] text-accent stroke-current stroke-[32] [stroke-linejoin:round]"
+					aria-hidden="true"
+				/>
+				<a class="post-title underline-offset-4 hover:underline focus-visible:underline" href={`/blog/${post.id}/`}>
+					{post.data.title}
+				</a>
+			</h2>
+			<p class="mt-1 text-fg">{post.data.description}</p>
+			<p class="mt-2 text-sm text-muted tabular-nums">
+				<time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time> · {readingMinutes(post)} min
+				read
+				{post.data.draft && <span class="ms-1 rounded border border-tag px-1.5 text-xs">draft</span>}
+			</p>
+		</li>
+	))}
+</ul>
+
+<style>
+	.post-title {
+		color: #306b59;
+	}
+
+	:global([data-theme='dark']) .post-title {
+		color: #b3e3ca;
+	}
+</style>

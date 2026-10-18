@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter/opsz.css';
+@plugin '@tailwindcss/typography';
 
 /* Dark mode follows the data-theme attribute set by astro-theme-toggle (ThemeScript in Base.astro). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -168,4 +169,37 @@
 	.tag {
 		@apply inline-block rounded border border-tag px-1.5 text-[0.8rem] leading-normal;
 	}
+}
+
+/* Blog post text (the typography plugin's `prose`) in the site colours. */
+@utility prose {
+	--tw-prose-body: var(--color-fg);
+	--tw-prose-headings: var(--color-heading);
+	--tw-prose-lead: var(--color-fg);
+	--tw-prose-links: var(--color-link);
+	--tw-prose-bold: var(--color-heading);
+	--tw-prose-counters: var(--color-muted);
+	--tw-prose-bullets: var(--color-accent);
+	--tw-prose-hr: var(--color-tag);
+	--tw-prose-quotes: var(--color-fg);
+	--tw-prose-quote-borders: var(--color-accent);
+	--tw-prose-captions: var(--color-muted);
+	--tw-prose-code: var(--color-heading);
+	--tw-prose-th-borders: var(--color-rule);
+	--tw-prose-td-borders: var(--color-tag);
+
+	& a {
+		text-decoration-color: var(--color-link-line);
+		text-underline-offset: 4px;
+	}
+	& a:hover {
+		text-decoration-color: var(--color-link);
+	}
+}
+
+/* Code blocks: Shiki renders both Everforest themes; show the dark one in dark mode. */
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+	color: var(--shiki-dark) !important;
+	background-color: var(--shiki-dark-bg) !important;
 }

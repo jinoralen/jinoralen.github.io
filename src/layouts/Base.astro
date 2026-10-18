@@ -2,15 +2,19 @@
 import { ThemeScript } from 'astro-theme-toggle/components';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { Icon } from 'astro-icon/components';
+import { getPosts } from '../data/posts';
 import { menuLinks, site } from '../data/site';
 import '../styles/global.css';
 
 interface Props {
 	title?: string;
 	description?: string;
+	article?: { published: Date; modified?: Date };
 }
 
-const { title, description = site.description } = Astro.props;
+const { title, description = site.description, article } = Astro.props;
+const hasPosts = (await getPosts()).length > 0;
+const menu = hasPosts ? [{ title: 'Blog', path: '/blog/' }, ...menuLinks] : menuLinks;
 const pageTitle = title ? `${title} · ${site.author}` : `${site.author} · ${site.tagline}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
@@ -33,7 +37,10 @@ const contacts = [
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="sitemap" href="/sitemap-index.xml" />
-		<meta property="og:type" content="website" />
+		<meta property="og:type" content={article ? 'article' : 'website'} />
+		{article && <meta property="article:published_time" content={article.published.toISOString()} />}
+		{article?.modified && <meta property="article:modified_time" content={article.modified.toISOString()} />}
+		{hasPosts && <link rel="alternate" type="application/rss+xml" title={`${site.author} · Blog`} href="/rss.xml" />}
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalURL} />
@@ -58,11 +65,11 @@ const contacts = [
 			</a>
 			<div class="flex items-center gap-4">
 				<nav aria-label="Main" class="flex gap-4">
-					{menuLinks.map((l) => (
+					{menu.map((l) => (
 						<a
 							class="text-muted underline-offset-4 hover:text-fg hover:underline aria-[current=page]:text-fg aria-[current=page]:underline"
 							href={l.path}
-							aria-current={Astro.url.pathname === l.path ? 'page' : undefined}
+							aria-current={Astro.url.pathname.startsWith(l.path) ? 'page' : undefined}
 						>
 							{l.title}
 						</a>
@@ -93,6 +100,12 @@ const contacts = [
 			<p>
 				&copy; {year} {site.author}
 			</p>
+			{hasPosts && (
+				<a class="inline-flex min-h-9 items-center gap-2 hover:text-accent" href="/rss.xml">
+					<Icon name="fa7-solid:rss" class="text-lg" aria-hidden="true" />
+					<span>Subscribe via RSS</span>
+				</a>
+			)}
 		</footer>
 		<script is:inline type="speculationrules">
 			{ "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "immediate" }] }
