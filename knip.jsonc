@@ -1,0 +1,5 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	// astro-icon loads these collections dynamically from icon names in Astro templates.
+	"ignoreDependencies": ["@iconify-json/fa7-brands", "@iconify-json/fa7-solid"],
+}
