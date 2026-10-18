@@ -25,6 +25,24 @@ pnpm preview
 
 The static site is generated in `dist/`.
 
+## PR checks
+
+Pull requests run formatting, type checking, Knip for unused code and dependencies,
+a production build, and Chromium tests. Run `pnpm knip` locally for the unused-code check.
+The browser tests check navigation, theme persistence, and automated accessibility
+on the home, experience, and 404 pages in light and dark mode.
+
+To run browser checks locally:
+
+```sh
+pnpm exec playwright install chromium
+pnpm build
+pnpm test:e2e
+```
+
+Playwright starts and stops the preview server automatically. Automated accessibility
+checks cover common issues; they do not replace manual keyboard and screen-reader testing.
+
 ## Files
 
 - `src/pages/index.astro` — homepage.

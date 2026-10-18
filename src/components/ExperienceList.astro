@@ -7,9 +7,9 @@ import { education, experience } from '../data/site';
 <div class="space-y-8">
 	{experience.map((c) => (
 		<div id={c.id} class="scroll-mt-4">
-			<h3 class="mb-2 text-lg text-heading sm:ms-[6.5rem]">
+			<h2 class="mb-2 text-lg text-heading sm:ms-[6.5rem]">
 				<strong class="[font-variant:small-caps]">{c.name}</strong>
-			</h3>
+			</h2>
 			<div class="space-y-7">
 				{c.roles.map((r) => (
 					<article id={r.id} class="scroll-mt-4 sm:grid sm:grid-cols-[5.5rem_1fr]">
@@ -22,9 +22,9 @@ import { education, experience } from '../data/site';
 							</p>
 						</div>
 						<div class="sm:ps-4">
-							<h4 class="text-heading">
+							<h3 class="text-heading">
 								<strong>{r.title}</strong>
-							</h4>
+							</h3>
 							<div class="mt-1 space-y-2 text-justify hyphens-auto">
 								{r.summary.map((p) => (
 									<p set:html={p} />
@@ -57,9 +57,9 @@ import { education, experience } from '../data/site';
 	))}
 	{/* Education closes the timeline, in the same layout as a role. */}
 	<div id={education.id} class="scroll-mt-4">
-		<h3 class="mb-2 text-lg text-heading sm:ms-[6.5rem]">
+		<h2 class="mb-2 text-lg text-heading sm:ms-[6.5rem]">
 			<strong class="[font-variant:small-caps]">{education.school}</strong>
-		</h3>
+		</h2>
 		<article class="sm:grid sm:grid-cols-[5.5rem_1fr]">
 			<div class="sm:border-e sm:border-rule sm:pe-3">
 				<p class="text-sm text-muted sm:text-center sm:text-base sm:text-fg">
@@ -69,9 +69,9 @@ import { education, experience } from '../data/site';
 				</p>
 			</div>
 			<div class="sm:ps-4">
-				<h4 class="text-heading">
+				<h3 class="text-heading">
 					<strong>{education.degree}</strong>
-				</h4>
+				</h3>
 				<p class="mt-1">{education.location}</p>
 			</div>
 		</article>
