@@ -15,7 +15,6 @@ concurrency:
 
 jobs:
   checks:
-    name: Format, types, build, and browser tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
