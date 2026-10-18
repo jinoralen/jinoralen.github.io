@@ -1,0 +1,280 @@
+---
+import { render } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import { formatDate, getPosts, readingMinutes, type Post } from '../../data/posts';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+	const posts = await getPosts();
+	return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+	post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, date, updated, tags, draft } = post.data;
+---
+
+<Base title={title} description={description} article={{ published: date, modified: updated }}>
+	<p class="mb-6 text-sm">
+		<a id="go-back" class="text-muted hover:text-fg" href="/blog/">
+			← Go back
+		</a>
+	</p>
+	<article id="post-top" tabindex="-1">
+		<header class="mb-8">
+			<p class="text-sm text-muted tabular-nums">
+				<time datetime={date.toISOString()}>{formatDate(date)}</time>
+				{updated && (
+					<>
+						{' '}
+						· updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+					</>
+				)}{' '}
+				· {readingMinutes(post)} min read
+				{draft && <span class="ms-1 rounded border border-tag px-1.5 text-xs">draft</span>}
+			</p>
+			<h1 class="mt-1 text-[2rem] leading-tight font-light tracking-tight text-heading">{title}</h1>
+			{tags.length > 0 && (
+				<ul class="mt-3 flex flex-wrap gap-1" aria-label="Tags">
+					{tags.map((t) => (
+						<li>
+							<a class="tag hover:text-link hover:underline underline-offset-4" href={`/blog/tags/${t}/`}>
+								{t}
+							</a>
+						</li>
+					))}
+				</ul>
+			)}
+		</header>
+		<div class="prose">
+			<Content />
+		</div>
+	</article>
+	<div class="mt-10 border-t border-tag pt-4">
+		<p class="text-end text-sm">
+			<a class="text-muted hover:text-fg" href="#post-top">
+				Back to top ↑
+			</a>
+		</p>
+	</div>
+	<dialog id="image-zoom" aria-label="Enlarged image">
+		<form method="dialog">
+			<button autofocus aria-label="Close enlarged image">
+				<Icon name="fa7-solid:xmark" class="text-2xl" aria-hidden="true" />
+			</button>
+		</form>
+		<img alt="" />
+	</dialog>
+</Base>
+
+<script>
+	const backLink = document.querySelector<HTMLAnchorElement>('#go-back');
+	if (backLink && document.referrer) {
+		const referrer = new URL(document.referrer);
+		if (referrer.origin === location.origin && referrer.href !== location.href) {
+			backLink.href = referrer.href;
+		}
+	}
+
+	for (const heading of document.querySelectorAll<HTMLElement>('.prose :is(h2, h3, h4, h5, h6)[id]')) {
+		if (heading.querySelector('a')) continue;
+		const link = document.createElement('a');
+		link.href = `#${heading.id}`;
+		link.className = 'heading-link';
+		link.append(...heading.childNodes);
+		const marker = document.createElement('span');
+		marker.className = 'heading-marker';
+		marker.setAttribute('aria-hidden', 'true');
+		marker.textContent = '#';
+		link.prepend(marker);
+		heading.append(link);
+	}
+
+	for (const code of document.querySelectorAll<HTMLElement>('.prose pre > code')) {
+		const block = code.parentElement!;
+		const wrapper = document.createElement('div');
+		wrapper.className = 'code-block';
+		block.before(wrapper);
+		wrapper.append(block);
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'copy-code';
+		button.textContent = 'Copy';
+		button.setAttribute('aria-label', 'Copy code');
+		button.setAttribute('aria-live', 'polite');
+		wrapper.append(button);
+
+		let resetTimer: ReturnType<typeof setTimeout> | undefined;
+		button.addEventListener('click', async () => {
+			clearTimeout(resetTimer);
+			button.disabled = true;
+			try {
+				await navigator.clipboard.writeText(code.textContent ?? '');
+				button.textContent = 'Copied';
+				button.setAttribute('aria-label', 'Code copied');
+			} catch {
+				button.textContent = 'Try again';
+				button.setAttribute('aria-label', 'Copy failed. Try again or select the code manually.');
+			} finally {
+				button.disabled = false;
+			}
+			resetTimer = setTimeout(() => {
+				button.textContent = 'Copy';
+				button.setAttribute('aria-label', 'Copy code');
+			}, 2000);
+		});
+	}
+
+	const zoom = document.querySelector<HTMLDialogElement>('#image-zoom')!;
+	const zoomImage = zoom.querySelector('img')!;
+	let activeImage: HTMLImageElement | undefined;
+	for (const image of document.querySelectorAll<HTMLImageElement>('.prose img')) {
+		if (image.closest('a')) continue;
+		image.tabIndex = 0;
+		image.setAttribute('role', 'button');
+		image.setAttribute('aria-haspopup', 'dialog');
+		image.setAttribute('aria-label', `Enlarge image: ${image.alt || 'Article illustration'}`);
+		image.classList.add('zoomable');
+		const open = () => {
+			activeImage = image;
+			zoomImage.src = image.currentSrc || image.src;
+			zoomImage.alt = image.alt;
+			zoom.showModal();
+		};
+		image.addEventListener('click', open);
+		image.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				open();
+			}
+		});
+	}
+	zoom.addEventListener('click', (event) => {
+		if (event.target === zoom) zoom.close();
+	});
+	zoom.addEventListener('close', () => activeImage?.focus({ preventScroll: true }));
+</script>
+
+<style>
+	:global(.prose .zoomable) {
+		cursor: zoom-in;
+	}
+
+	:global(.prose .zoomable:focus-visible) {
+		outline: 2px solid var(--color-link);
+		outline-offset: 3px;
+	}
+
+	#image-zoom {
+		position: fixed;
+		inset: 0;
+		margin: auto;
+		max-width: 96vw;
+		max-height: 96dvh;
+		padding: 0.75rem;
+		border: 1px solid var(--color-tag);
+		border-radius: 0.5rem;
+		background: var(--color-bg);
+		color: var(--color-fg);
+	}
+
+	#image-zoom::backdrop {
+		background: rgb(0 0 0 / 80%);
+	}
+
+	#image-zoom form {
+		display: flex;
+		justify-content: end;
+		margin-bottom: 0.5rem;
+	}
+
+	#image-zoom button {
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border-radius: 50%;
+		color: var(--color-muted);
+		cursor: pointer;
+	}
+
+	#image-zoom button:hover {
+		background: var(--color-selection);
+		color: var(--color-heading);
+	}
+
+	#image-zoom button:focus-visible {
+		outline: 2px solid var(--color-link);
+		outline-offset: 2px;
+	}
+
+	#image-zoom img {
+		display: block;
+		max-width: 100%;
+		max-height: calc(96dvh - 5rem);
+		margin: auto;
+		object-fit: contain;
+	}
+
+	:global(.prose .code-block) {
+		position: relative;
+	}
+
+	:global(.prose .copy-code) {
+		position: absolute;
+		top: 0.5rem;
+		inset-inline-end: 0.5rem;
+		border: 1px solid var(--color-tag);
+		border-radius: 0.25rem;
+		padding: 0.25rem 0.5rem;
+		background: var(--color-bg);
+		color: var(--color-muted);
+		font: inherit;
+		font-size: 0.75rem;
+		cursor: pointer;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		:global(.prose .copy-code) {
+			opacity: 0;
+		}
+
+		:global(.prose .code-block:hover .copy-code),
+		:global(.prose .code-block:focus-within .copy-code) {
+			opacity: 1;
+		}
+	}
+
+	:global(.prose .copy-code:hover) {
+		color: var(--color-fg);
+	}
+
+	:global(.prose .copy-code:focus-visible) {
+		outline: 2px solid var(--color-link);
+		outline-offset: 3px;
+	}
+
+	:global(.prose .heading-link) {
+		position: relative;
+		color: inherit;
+		font-weight: inherit;
+		text-decoration: none;
+	}
+
+	:global(.prose .heading-marker) {
+		position: absolute;
+		inset-inline-end: 100%;
+		padding-inline-end: 0.25em;
+		color: var(--color-muted);
+		opacity: 0;
+	}
+
+	:global(.prose .heading-link:hover .heading-marker),
+	:global(.prose .heading-link:focus-visible .heading-marker) {
+		opacity: 1;
+	}
+</style>

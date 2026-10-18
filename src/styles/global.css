@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter/opsz.css';
+@plugin '@tailwindcss/typography';
 
 /* Dark mode follows the data-theme attribute set by astro-theme-toggle (ThemeScript in Base.astro). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -43,6 +44,11 @@
 	inherits: true;
 	initial-value: #a9bbd6;
 }
+@property --color-post-title {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #306b59;
+}
 @property --color-rule {
 	syntax: '<color>';
 	inherits: true;
@@ -70,9 +76,11 @@
 	--color-accent: #4d7a45;
 	--color-link: #3b5f8f;
 	--color-link-line: #a9bbd6;
+	--color-post-title: #306b59;
 	--color-rule: #9aa8a0;
 	--color-tag: #d3dbd4;
 	--color-selection: #e1ebd6;
+	--color-code-bg: color-mix(in oklab, var(--color-tag) 40%, var(--color-bg));
 }
 
 @layer base {
@@ -87,6 +95,7 @@
 			--color-accent 300ms ease-in-out,
 			--color-link 300ms ease-in-out,
 			--color-link-line 300ms ease-in-out,
+			--color-post-title 300ms ease-in-out,
 			--color-rule 300ms ease-in-out,
 			--color-tag 300ms ease-in-out,
 			--color-selection 300ms ease-in-out;
@@ -101,6 +110,7 @@
 			--color-accent: #cbe3b3;
 			--color-link: #b2caed;
 			--color-link-line: #58686d;
+			--color-post-title: #b3e3ca;
 			--color-rule: #58686d;
 			--color-tag: #4a585c;
 			--color-selection: #374145;
@@ -153,19 +163,95 @@
 		}
 
 		& > li::before {
-			content: '';
+			content: '›';
 			position: absolute;
 			left: 0.85em;
-			top: 0.5em;
-			width: 0.35em;
-			height: 0.7em;
-			background-color: var(--color-accent);
-			mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 512'%3E%3Cpath d='M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z'/%3E%3C/svg%3E")
-				no-repeat center / contain;
+			top: 0;
+			color: var(--color-accent);
+			font-weight: 700;
 		}
 	}
 
 	.tag {
 		@apply inline-block rounded border border-tag px-1.5 text-[0.8rem] leading-normal;
 	}
+}
+
+/* Blog post text (the typography plugin's `prose`) in the site colours.
+   Unlayered on purpose: it must beat the plugin's own `prose` utility, whatever order Tailwind emits them in. */
+.prose {
+	--tw-prose-body: var(--color-fg);
+	--tw-prose-headings: var(--color-heading);
+	--tw-prose-lead: var(--color-fg);
+	--tw-prose-links: var(--color-link);
+	--tw-prose-bold: var(--color-heading);
+	--tw-prose-counters: var(--color-muted);
+	--tw-prose-bullets: var(--color-accent);
+	--tw-prose-hr: var(--color-tag);
+	--tw-prose-quotes: var(--color-fg);
+	--tw-prose-quote-borders: var(--color-accent);
+	--tw-prose-captions: var(--color-muted);
+	--tw-prose-code: var(--color-heading);
+	--tw-prose-th-borders: var(--color-rule);
+	--tw-prose-td-borders: var(--color-tag);
+
+	/* Readable line length; the page column is wider. */
+	max-width: 68ch;
+
+	/* Section headings like the home page: small caps over a rule. */
+	& h2 {
+		margin-top: 1.75em;
+		margin-bottom: 0.75em;
+		border-bottom: 1px solid var(--color-rule);
+		padding-bottom: 0.25rem;
+		font-size: 1.45em;
+		font-weight: 400;
+		line-height: 1.25;
+		font-variant: small-caps;
+	}
+
+	/* Bullets: the same angle-right marker as .chevron-list. */
+	& ul > li {
+		position: relative;
+		list-style: none;
+	}
+	& ul > li::before {
+		content: '›';
+		position: absolute;
+		inset-inline-start: -1em;
+		top: 0;
+		color: var(--color-accent);
+		font-weight: 700;
+	}
+
+	/* Inline code: a quiet chip instead of the plugin's literal backticks. */
+	& :not(pre) > code {
+		border-radius: 0.25rem;
+		padding: 0.1em 0.3em;
+		background-color: var(--color-code-bg);
+		font-weight: 500;
+	}
+	& :not(pre) > code::before,
+	& :not(pre) > code::after {
+		content: none;
+	}
+
+	& a {
+		text-decoration-color: var(--color-link-line);
+		text-underline-offset: 4px;
+	}
+	& a:hover {
+		text-decoration-color: var(--color-link);
+	}
+}
+
+/* Code blocks: Shiki renders both Everforest themes; show the dark one in dark mode.
+   The background is the site's, so it matches the page and fades with the theme. */
+.astro-code {
+	background-color: var(--color-code-bg) !important;
+}
+
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+	color: var(--shiki-dark) !important;
 }

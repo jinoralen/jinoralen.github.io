@@ -1,0 +1,15 @@
+---
+import { getPosts } from '../../data/posts';
+import PostList from '../../components/PostList.astro';
+import { site } from '../../data/site';
+import Base from '../../layouts/Base.astro';
+
+const posts = await getPosts();
+---
+
+<Base title="Blog" description={`Posts by ${site.author} on mobile and AI engineering.`}>
+	<h1 class="text-[2rem] leading-tight font-light tracking-tight text-heading">Blog</h1>
+	<p class="mt-1 mb-8 text-lg text-muted">Notes on mobile and AI engineering.</p>
+	{posts.length === 0 && <p>No posts published yet.</p>}
+	<PostList posts={posts} />
+</Base>

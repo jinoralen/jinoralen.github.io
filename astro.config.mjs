@@ -8,6 +8,9 @@ import icon from 'astro-icon';
 export default defineConfig({
 	site: 'https://jinoralen.github.io',
 	integrations: [icon(), sitemap()],
+	markdown: {
+		shikiConfig: { themes: { light: 'everforest-light', dark: 'everforest-dark' } },
+	},
 	vite: {
 		plugins: [tailwindcss()],
 	},
