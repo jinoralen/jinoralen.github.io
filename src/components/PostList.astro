@@ -14,10 +14,13 @@ const { posts } = Astro.props;
 			<h2 class="relative text-xl leading-snug">
 				<Icon
 					name="fa7-solid:chevron-right"
-					class="absolute end-full top-[0.3em] me-1 text-[0.85em] text-accent stroke-current stroke-[32] [stroke-linejoin:round]"
+					class="absolute end-full top-[0.3em] me-1 hidden sm:block text-[0.85em] text-accent stroke-current stroke-[32] [stroke-linejoin:round]"
 					aria-hidden="true"
 				/>
-				<a class="post-title underline-offset-4 hover:underline focus-visible:underline" href={`/blog/${post.id}/`}>
+				<a
+					class="text-post-title underline-offset-4 hover:underline focus-visible:underline"
+					href={`/blog/${post.id}/`}
+				>
 					{post.data.title}
 				</a>
 			</h2>
@@ -30,13 +33,3 @@ const { posts } = Astro.props;
 		</li>
 	))}
 </ul>
-
-<style>
-	.post-title {
-		color: #306b59;
-	}
-
-	:global([data-theme='dark']) .post-title {
-		color: #b3e3ca;
-	}
-</style>

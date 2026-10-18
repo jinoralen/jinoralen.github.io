@@ -1,7 +1,7 @@
 ---
-import PostList from '../../components/PostList.astro';
-import { getPosts, type Post } from '../../data/posts';
-import Base from '../../layouts/Base.astro';
+import PostList from '../../../components/PostList.astro';
+import { getPosts, type Post } from '../../../data/posts';
+import Base from '../../../layouts/Base.astro';
 
 export async function getStaticPaths() {
 	const posts = await getPosts();

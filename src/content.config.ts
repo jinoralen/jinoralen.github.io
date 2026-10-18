@@ -11,7 +11,14 @@ const blog = defineCollection({
 		date: z.coerce.date(),
 		updated: z.coerce.date().optional(),
 		tags: z
-			.array(z.string().trim().toLowerCase().min(1))
+			// Tags are URL segments (/blog/tags/<tag>/), so only slugs are allowed.
+			.array(
+				z
+					.string()
+					.trim()
+					.toLowerCase()
+					.regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Use a slug tag, e.g. ai-agents'),
+			)
 			.default([])
 			.transform((tags) => [...new Set(tags)]),
 		// Drafts show on the dev server only; they are never built or published.

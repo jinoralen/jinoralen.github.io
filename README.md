@@ -52,6 +52,4 @@ Set `draft: false` when a post is ready to publish. Optional `updated` dates app
 The Blog navigation link appears when there are visible posts. The feed is available at `/rss.xml`.
 Keep images beside the post, for example `<slug>/illustration.png`, and reference them as `![Alt text](./illustration.png)`.
 
-The imported Herdr posts remain drafts; their dates are the import date, to be set before publishing.
-
-Post tags link to `/tags/<tag>/`, listing matching posts newest first. Tags are trimmed, lowercased, and deduplicated. Tag pages follow the same draft visibility rules as the blog.
+Post tags link to `/blog/tags/<tag>/`, listing matching posts newest first. Tags are trimmed, lowercased, and deduplicated; they must be slugs (`ai-agents`), or the build fails. Tag pages follow the same draft visibility rules as the blog.
